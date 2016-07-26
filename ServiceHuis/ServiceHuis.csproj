@@ -34,11 +34,11 @@
     <Content Include="Scripts\jquery-3.1.0.slim.min.js" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Interfaces\IVerkooppunt.ts" />
-    <TypeScriptCompile Include="Interfaces\IGebied.ts" />
-    <TypeScriptCompile Include="Interfaces\IGebiedRegeling.ts" />
-    <TypeScriptCompile Include="Interfaces\ITariefdeel.ts" />
-    <TypeScriptCompile Include="Interfaces\ITijdvak.ts" />
+    <TypeScriptCompile Include="Models\verkooppunt.ts" />
+    <TypeScriptCompile Include="Models\gebied.ts" />
+    <TypeScriptCompile Include="Models\gebiedRegeling.ts" />
+    <TypeScriptCompile Include="Models\tariefdeel.ts" />
+    <TypeScriptCompile Include="Models\tijdvak.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="serviceHuis.ts" />
     <TypeScriptCompile Include="typings\jinqJs\jinqJs.d.ts" />
