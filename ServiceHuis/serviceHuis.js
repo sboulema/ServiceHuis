@@ -1,7 +1,14 @@
+/// <reference path="typings/jinqjs/jinqjs.d.ts" />
+/// <reference path="scripts/typings/jquery/jquery.d.ts" />
+/// <reference path="interfaces/igebied.ts" />
+/// <reference path="interfaces/igebiedregeling.ts" />
+/// <reference path="interfaces/itariefdeel.ts" />
+/// <reference path="interfaces/itijdvak.ts" />
+/// <reference path="interfaces/iverkooppunt.ts" />
 var ServiceHuis;
 (function (ServiceHuis) {
     var Verkooppunt = ServiceHuis.Interfaces.Verkooppunt;
-    /* loadVerkooppunten
+    /**
      * http://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt
      */
     function loadVerkooppunten(callback) {
@@ -17,7 +24,7 @@ var ServiceHuis;
         });
     }
     ServiceHuis.loadVerkooppunten = loadVerkooppunten;
-    /* loadGebiedsbeheerders
+    /**
      * Tabel met informatie over de rechtspersoon die zeggenschap heeft over het gebruiksdoel en de regeling van een gebied.
      * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIEDSBEHEERDER/2uc2-nnv3
      */
@@ -28,7 +35,7 @@ var ServiceHuis;
         });
     }
     ServiceHuis.loadGebiedsbeheerders = loadGebiedsbeheerders;
-    /* loadGebieden
+    /**
      * Een benoemde ruimte met een gebruiksdoel waar een voertuig zich onder condities kan begeven of bevinden.
      * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED/adw6-9hsg
      */
@@ -51,7 +58,7 @@ var ServiceHuis;
         });
     }
     ServiceHuis.loadGebieden = loadGebieden;
-    /* loadParkeergebieden
+    /**
      * Deze tabel legt een koppeling tussen de gebieden zoals deze vastgelegd zijn in het NPR en de gebieden zoals deze voor Open Data Parkeren volgens de standaard SPDP2.0 gepubliceerd worden.
      * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-PARKEERGEBIED/mz4f-59fw
      */
@@ -61,7 +68,7 @@ var ServiceHuis;
         });
     }
     ServiceHuis.loadParkeergebieden = loadParkeergebieden;
-    /* loadGebiedRegeling
+    /**
      * Regeling of regelingen die op een gebied van toepassing zijn. Op een bepaald moment is op één gebied maar één regeling van toepassing, maar de regeling die van toepassing is op een gebied, kan periodiek veranderen.
      * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED-REGELING/qtex-qwd8
      */
@@ -82,7 +89,7 @@ var ServiceHuis;
         });
     }
     ServiceHuis.loadGebiedRegeling = loadGebiedRegeling;
-    /* loadTijdvak
+    /**
      * Een deel van een benoemd etmaal waarin een bepaalde regeling van toepassing is. In een etmaal kan voor nul, een of meerdere tijdvakken worden geregistreerd welk tarief van toepassing is en kunnen andere
      * aspecten van een regeling worden vastgelegd. Tijdvakken mogen niet overlappen, maar tijdvakken hoeven niet aaneen te sluiten. Voor die gedeelten van het etmaal waarvoor geen tijdvak is, geldt dat volgens
      * de regeling het recht geen tarief heeft, bv. overdag betaald parkeren, maar 's avonds en 's nachts gratis.
@@ -106,7 +113,7 @@ var ServiceHuis;
         });
     }
     ServiceHuis.loadTijdvak = loadTijdvak;
-    /* loadTariefdeel
+    /**
      * Een tarief bestaat uit 1 of meerdere tariefdelen. Als er een vast tarief per tijdvak is, ongeacht de parkeerduur, dan is er 1 deel zonder tariefdeel duurbegrenzing. Als het tarief afhankelijk is van de
      * parkeerduur (progressief/degressief tarief), zijn er meerdere tariefdelen, waarvan een aantal qua duur begrensd.
      * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-TARIEFDEEL/534e-5vdg
