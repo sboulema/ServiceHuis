@@ -1,0 +1,8 @@
+/ServiceHuis/bin
+/ServiceHuis/obj
+/ServiceHuis/packages
+/ServiceHuis/Scripts
+/ServiceHuis/typings
+/ServiceHuis/*.user
+/ServiceHuis/.vs/ServiceHuis/v14/*.suo
+/ServiceHuis/.vs
