@@ -1,4 +1,4 @@
-﻿module ServiceHuis {
+﻿namespace ServiceHuis {
     export interface IVerkooppunt {
         verkooppunt: string;
         longitude: string;

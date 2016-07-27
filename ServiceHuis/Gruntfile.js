@@ -21,7 +21,7 @@ module.exports = function (grunt) {
         uglify: {
             serviceHuis: {
                 files: {
-                    'serviceHuis.min.js': ['serviceHuis.js']
+                    'dist/serviceHuis.min.js': ['dist/serviceHuis.js']
                 }
             }
         }

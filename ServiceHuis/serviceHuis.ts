@@ -5,13 +5,42 @@
 /// <reference path="models/gebiedregeling.ts" />
 /// <reference path="models/tijdvak.ts" />
 /// <reference path="models/tariefdeel.ts" />
+/// <reference path="models/results.ts" />
 
-module ServiceHuis {
-    export class DataSets {
+namespace ServiceHuis {
+    export module DataSets {
+
+        export function getInfoByAreaManagerId(areaManagerId: string, city: string, usageId: string, filterOnActive: boolean, processInfo: any) {
+            const info = new Results();
+            info.areamanagerid = areaManagerId;
+            info.city = city;
+            loadGebieden(areaManagerId, usageId, filterOnActive, processGebieden, info, processInfo);
+        }
+
+        function processGebieden(gebieden, info: Results, processInfo: any) {
+            info.gebieden = gebieden;
+            loadGebiedRegeling(info.areamanagerid, null, true, processGebiedRegeling, info, processInfo);
+        }
+
+        function processGebiedRegeling(regelingen, info: Results, processInfo: any) {
+            info.regelingen = regelingen;
+            loadTijdvak(info.areamanagerid, null, true, processTijdvak, info, processInfo);
+        }
+
+        function processTijdvak(tijdvakken, info: Results, processInfo: any) {
+            info.tijdvakken = tijdvakken;
+            loadTariefdeel(info.areamanagerid, null, true, processTariefdeel, info, processInfo);
+        }
+
+        function processTariefdeel(tariefdelen, info: Results, processInfo: any) {
+            info.tariefdelen = tariefdelen;
+            processInfo(info);
+        }
+
         /**
          * http://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt
          */
-        loadVerkooppunten(callback: any) {
+        export function loadVerkooppunten(callback: any) {
             $.get("http://cors.sboulema.nl/" + "http://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", data => {
                 var lines = data.split("\n");
                 lines.splice(0, 1);
@@ -31,7 +60,7 @@ module ServiceHuis {
          * Tabel met informatie over de rechtspersoon die zeggenschap heeft over het gebruiksdoel en de regeling van een gebied.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIEDSBEHEERDER/2uc2-nnv3
          */
-        loadGebiedsbeheerders(callback: any) {
+        export function loadGebiedsbeheerders(callback: any) {
             $.getJSON("https://opendata.rdw.nl/resource/t6n6-h9zf.json", data => {
                 data = data.sort(compareByDesc);
                 callback(data);
@@ -42,7 +71,7 @@ module ServiceHuis {
          * Een benoemde ruimte met een gebruiksdoel waar een voertuig zich onder condities kan begeven of bevinden.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED/adw6-9hsg
          */
-        loadGebieden(areamanagerid: string, usageId: string, filterOnActive: boolean, callback: any, callbackParams: any) {
+        export function loadGebieden(areamanagerid: string, usageId: string, filterOnActive: boolean, callback: any, callbackParams: any, callbackFinal: any) {
             $.getJSON(`https://opendata.rdw.nl/resource/8u4d-s4q7.json?areamanagerid=${areamanagerid}`, data => {
                 if (filterOnActive) {
                     data = new jinqJs()
@@ -58,18 +87,8 @@ module ServiceHuis {
                         .select(row => row);
                 }
 
-                callback(data, callbackParams);
+                callback(data, callbackParams, callbackFinal);
                 return data;
-            });
-        }
-
-        /**
-         * Deze tabel legt een koppeling tussen de gebieden zoals deze vastgelegd zijn in het NPR en de gebieden zoals deze voor Open Data Parkeren volgens de standaard SPDP2.0 gepubliceerd worden.
-         * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-PARKEERGEBIED/mz4f-59fw
-         */
-        loadParkeergebieden(areamanagerid: string, callback: any, callbackParams: any) {
-            $.getJSON(`https://opendata.rdw.nl/resource/svfa-juwh.json?areamanagerid=${areamanagerid}`, data => {
-                callback(data, callbackParams);
             });
         }
 
@@ -77,7 +96,7 @@ module ServiceHuis {
          * Regeling of regelingen die op een gebied van toepassing zijn. Op een bepaald moment is op één gebied maar één regeling van toepassing, maar de regeling die van toepassing is op een gebied, kan periodiek veranderen.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED-REGELING/qtex-qwd8
          */
-        loadGebiedRegeling(areamanagerid: string, areaid: string, filterOnActive: boolean, callback: any, callbackParams: any) {
+        export function loadGebiedRegeling(areamanagerid: string, areaid: string, filterOnActive: boolean, callback: any, callbackParams: any, callbackFinal: any) {
             let url = `https://opendata.rdw.nl/resource/v7za-hcf3.json?areamanagerid=${areamanagerid}`;
             if (areaid !== null) {
                 url += `&areaid=${areaid}`;
@@ -92,8 +111,18 @@ module ServiceHuis {
                         .select(row => row);
                 }
 
-                callback(data, callbackParams);
+                callback(data, callbackParams, callbackFinal);
                 return data;
+            });
+        }
+
+        /**
+         * Deze tabel legt een koppeling tussen de gebieden zoals deze vastgelegd zijn in het NPR en de gebieden zoals deze voor Open Data Parkeren volgens de standaard SPDP2.0 gepubliceerd worden.
+         * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-PARKEERGEBIED/mz4f-59fw
+         */
+        export function loadParkeergebieden(areamanagerid: string, callback: any, callbackParams: any, callbackFinal: any) {
+            $.getJSON(`https://opendata.rdw.nl/resource/svfa-juwh.json?areamanagerid=${areamanagerid}`, data => {
+                callback(data, callbackParams, callbackFinal);
             });
         }
 
@@ -103,7 +132,7 @@ module ServiceHuis {
          * de regeling het recht geen tarief heeft, bv. overdag betaald parkeren, maar 's avonds en 's nachts gratis.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-TIJDVAK/ixf8-gtwq
          */
-        loadTijdvak(areamanagerid: string, fareCalculationCode: string, filterOnActive: boolean, callback: any, callbackParams: any) {
+        export function loadTijdvak(areamanagerid: string, fareCalculationCode: string, filterOnActive: boolean, callback: any, callbackParams: any, callbackFinal: any) {
             $.getJSON(`https://opendata.rdw.nl/resource/pwnm-2uua.json?areamanagerid=${areamanagerid}`, data => {
 
                 if (filterOnActive) {
@@ -120,7 +149,7 @@ module ServiceHuis {
                         .select(row => row);
                 }
 
-                callback(data, callbackParams);
+                callback(data, callbackParams, callbackFinal);
             });
         }
 
@@ -129,7 +158,7 @@ module ServiceHuis {
          * parkeerduur (progressief/degressief tarief), zijn er meerdere tariefdelen, waarvan een aantal qua duur begrensd.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-TARIEFDEEL/534e-5vdg
          */
-        loadTariefdeel(areamanagerid: string, fareCalculationCode: string, filterOnActive: boolean, callback: any, callbackParams: any) {
+        export function loadTariefdeel(areamanagerid: string, fareCalculationCode: string, filterOnActive: boolean, callback: any, callbackParams: any, callbackFinal: any) {
             let url = `https://opendata.rdw.nl/resource/m3un-bgqw.json?areamanagerid=${areamanagerid}`;
             if (fareCalculationCode !== null) {
                 url += `&farecalculationcode=${fareCalculationCode}`;
@@ -144,13 +173,13 @@ module ServiceHuis {
                         .select(row => row);
                 }
 
-                callback(data, callbackParams);
+                callback(data, callbackParams, callbackFinal);
             });
         }
     }
 
-    export class Utils {
-        getZoneCode(verkooppunten: Verkooppunt[], areamanagerid: string, areaid: string) {
+    export module Utils {
+        export function getZoneCode(verkooppunten: Verkooppunt[], areamanagerid: string, areaid: string) {
             const zoneCode = new jinqJs()
                 .from(verkooppunten)
                 .where<Verkooppunt>(row => (row.gebied === areaid && row.gebDomein === areamanagerid))
@@ -163,7 +192,7 @@ module ServiceHuis {
             return zoneCode[0].verkooppunt;
         }
 
-        formatTimeframe(timeframe: string) {
+        export function formatTimeframe(timeframe: string) {
             const min = timeframe.substr(timeframe.length - 2);
             let hour = timeframe.substr(0, timeframe.length - min.length);
 
