@@ -6,15 +6,16 @@
 /// <reference path="models/tijdvak.ts" />
 /// <reference path="models/tariefdeel.ts" />
 /// <reference path="models/results.ts" />
+/// <reference path="models/regeling.ts" />
 
 namespace ServiceHuis {
     export module DataSets {
 
-        export function getInfoByAreaManagerId(areaManagerId: string, city: string, usageId: string, filterOnActive: boolean, processInfo: any) {
+        export function getInfoByAreaManagerId(areaManagerId: string, callback: any, city?: string, usageId?: string, filterOnActive?: boolean) {
             const info = new Results();
             info.areamanagerid = areaManagerId;
             info.city = city;
-            loadGebieden(areaManagerId, usageId, filterOnActive, processGebieden, info, processInfo);
+            loadGebieden(areaManagerId, processGebieden, usageId, filterOnActive, info, callback);
         }
 
         function processGebieden(gebieden, info: Results, processInfo: any) {
@@ -23,6 +24,11 @@ namespace ServiceHuis {
         }
 
         function processGebiedRegeling(regelingen, info: Results, processInfo: any) {
+            info.gebiedregelingen = regelingen;
+            loadRegeling(info.areamanagerid, processRegelingen, true, info, processInfo);
+        }
+
+        function processRegelingen(regelingen, info: Results, processInfo: any) {
             info.regelingen = regelingen;
             loadTijdvak(info.areamanagerid, null, true, processTijdvak, info, processInfo);
         }
@@ -71,7 +77,7 @@ namespace ServiceHuis {
          * Een benoemde ruimte met een gebruiksdoel waar een voertuig zich onder condities kan begeven of bevinden.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED/adw6-9hsg
          */
-        export function loadGebieden(areamanagerid: string, usageId: string, filterOnActive: boolean, callback: any, callbackParams: any, callbackFinal: any) {
+        export function loadGebieden(areamanagerid: string, callback: any, usageId?: string, filterOnActive?: boolean, callbackParams?: any, callbackFinal?: any) {
             $.getJSON(`https://opendata.rdw.nl/resource/8u4d-s4q7.json?areamanagerid=${areamanagerid}`, data => {
                 if (filterOnActive) {
                     data = new jinqJs()
@@ -80,7 +86,7 @@ namespace ServiceHuis {
                         .select(row => row);
                 }
 
-                if (usageId !== null) {
+                if (usageId) {
                     data = new jinqJs()
                         .from(data)
                         .where<IGebied>(row => (row.usageid === usageId))
@@ -176,20 +182,32 @@ namespace ServiceHuis {
                 callback(data, callbackParams, callbackFinal);
             });
         }
+
+        /**
+         * Een regeling bevat alle condities die gelden wanneer iemand een recht voor een bepaald gebied verwerft.
+         * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-REGELING/pezp-7mrc
+         */
+        export function loadRegeling(areamanagerid: string, callback: any, filterOnActive?: boolean, callbackParams?: any, callbackFinal?: any) {
+            $.getJSON(`https://opendata.rdw.nl/resource/n5c7-ce36.json?areamanagerid=${areamanagerid}`, data => {
+
+                if (filterOnActive) {
+                    data = new jinqJs()
+                        .from(data)
+                        .where<IRegeling>(row => parseDate(row.startdateregulation) <= new Date() && parseDate(row.enddateregulation) >= new Date())
+                        .select(row => row);
+                }
+
+                callback(data, callbackParams, callbackFinal);
+            });
+        }
     }
 
     export module Utils {
-        export function getZoneCode(verkooppunten: Verkooppunt[], areamanagerid: string, areaid: string) {
-            const zoneCode = new jinqJs()
+        export function getZoneCodes(verkooppunten: Verkooppunt[], areamanagerid: string, areaid: string) {
+            return new jinqJs()
                 .from(verkooppunten)
                 .where<Verkooppunt>(row => (row.gebied === areaid && row.gebDomein === areamanagerid))
-                .select<Verkooppunt>(row => row);
-
-            if (zoneCode.length === 0) {
-                return "";
-            }
-
-            return zoneCode[0].verkooppunt;
+                .select<string>(<Verkooppunt>(row) => row.verkooppunt);
         }
 
         export function formatTimeframe(timeframe: string) {

@@ -25,15 +25,16 @@ var ServiceHuis;
 /// <reference path="models/tijdvak.ts" />
 /// <reference path="models/tariefdeel.ts" />
 /// <reference path="models/results.ts" />
+/// <reference path="models/regeling.ts" />
 var ServiceHuis;
 (function (ServiceHuis) {
     var DataSets;
     (function (DataSets) {
-        function getInfoByAreaManagerId(areaManagerId, city, usageId, filterOnActive, processInfo) {
+        function getInfoByAreaManagerId(areaManagerId, callback, city, usageId, filterOnActive) {
             var info = new ServiceHuis.Results();
             info.areamanagerid = areaManagerId;
             info.city = city;
-            loadGebieden(areaManagerId, usageId, filterOnActive, processGebieden, info, processInfo);
+            loadGebieden(areaManagerId, processGebieden, usageId, filterOnActive, info, callback);
         }
         DataSets.getInfoByAreaManagerId = getInfoByAreaManagerId;
         function processGebieden(gebieden, info, processInfo) {
@@ -41,6 +42,10 @@ var ServiceHuis;
             loadGebiedRegeling(info.areamanagerid, null, true, processGebiedRegeling, info, processInfo);
         }
         function processGebiedRegeling(regelingen, info, processInfo) {
+            info.gebiedregelingen = regelingen;
+            loadRegeling(info.areamanagerid, processRegelingen, true, info, processInfo);
+        }
+        function processRegelingen(regelingen, info, processInfo) {
             info.regelingen = regelingen;
             loadTijdvak(info.areamanagerid, null, true, processTijdvak, info, processInfo);
         }
@@ -83,7 +88,7 @@ var ServiceHuis;
          * Een benoemde ruimte met een gebruiksdoel waar een voertuig zich onder condities kan begeven of bevinden.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED/adw6-9hsg
          */
-        function loadGebieden(areamanagerid, usageId, filterOnActive, callback, callbackParams, callbackFinal) {
+        function loadGebieden(areamanagerid, callback, usageId, filterOnActive, callbackParams, callbackFinal) {
             $.getJSON("https://opendata.rdw.nl/resource/8u4d-s4q7.json?areamanagerid=" + areamanagerid, function (data) {
                 if (filterOnActive) {
                     data = new jinqJs()
@@ -91,7 +96,7 @@ var ServiceHuis;
                         .where(function (row) { return (parseDate(row.startdatearea) <= new Date() && parseDate(row.enddatearea) >= new Date()); })
                         .select(function (row) { return row; });
                 }
-                if (usageId !== null) {
+                if (usageId) {
                     data = new jinqJs()
                         .from(data)
                         .where(function (row) { return (row.usageid === usageId); })
@@ -178,20 +183,32 @@ var ServiceHuis;
             });
         }
         DataSets.loadTariefdeel = loadTariefdeel;
+        /**
+         * Een regeling bevat alle condities die gelden wanneer iemand een recht voor een bepaald gebied verwerft.
+         * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-REGELING/pezp-7mrc
+         */
+        function loadRegeling(areamanagerid, callback, filterOnActive, callbackParams, callbackFinal) {
+            $.getJSON("https://opendata.rdw.nl/resource/n5c7-ce36.json?areamanagerid=" + areamanagerid, function (data) {
+                if (filterOnActive) {
+                    data = new jinqJs()
+                        .from(data)
+                        .where(function (row) { return parseDate(row.startdateregulation) <= new Date() && parseDate(row.enddateregulation) >= new Date(); })
+                        .select(function (row) { return row; });
+                }
+                callback(data, callbackParams, callbackFinal);
+            });
+        }
+        DataSets.loadRegeling = loadRegeling;
     })(DataSets = ServiceHuis.DataSets || (ServiceHuis.DataSets = {}));
     var Utils;
     (function (Utils) {
-        function getZoneCode(verkooppunten, areamanagerid, areaid) {
-            var zoneCode = new jinqJs()
+        function getZoneCodes(verkooppunten, areamanagerid, areaid) {
+            return new jinqJs()
                 .from(verkooppunten)
                 .where(function (row) { return (row.gebied === areaid && row.gebDomein === areamanagerid); })
-                .select(function (row) { return row; });
-            if (zoneCode.length === 0) {
-                return "";
-            }
-            return zoneCode[0].verkooppunt;
+                .select(function (row) { return row.verkooppunt; });
         }
-        Utils.getZoneCode = getZoneCode;
+        Utils.getZoneCodes = getZoneCodes;
         function formatTimeframe(timeframe) {
             var min = timeframe.substr(timeframe.length - 2);
             var hour = timeframe.substr(0, timeframe.length - min.length);

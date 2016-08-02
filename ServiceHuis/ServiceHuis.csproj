@@ -35,6 +35,7 @@
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Models\regeling.ts" />
     <TypeScriptCompile Include="Models\results.ts" />
     <TypeScriptCompile Include="Models\verkooppunt.ts" />
     <TypeScriptCompile Include="Models\gebied.ts" />
