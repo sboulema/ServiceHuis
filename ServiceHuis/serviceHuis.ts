@@ -211,6 +211,10 @@ namespace ServiceHuis {
         }
 
         export function formatTimeframe(timeframe: string) {
+            if (timeframe === "0") {
+                return "00:00";
+            }
+
             const min = timeframe.substr(timeframe.length - 2);
             let hour = timeframe.substr(0, timeframe.length - min.length);
 

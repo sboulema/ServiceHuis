@@ -210,6 +210,9 @@ var ServiceHuis;
         }
         Utils.getZoneCodes = getZoneCodes;
         function formatTimeframe(timeframe) {
+            if (timeframe === "0") {
+                return "00:00";
+            }
             var min = timeframe.substr(timeframe.length - 2);
             var hour = timeframe.substr(0, timeframe.length - min.length);
             if (+hour < 10) {
