@@ -7,6 +7,8 @@
     "grunt-cli": "~1.1.0",
     "grunt-contrib-uglify": "~0.5.0",
     "grunt-typedoc": "^0.2.4",
+    "grunt-contrib-copy": "",
+    "grunt-git-selective-deploy": "",
     "typedoc": "^0.4.4"
   }
 }
