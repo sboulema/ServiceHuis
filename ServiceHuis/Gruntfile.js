@@ -50,5 +50,5 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask("Docs: Generate + Publish", ["typedoc:build", "copy:nojekyll", "git_deploy:ghPages"]);
+    grunt.registerTask("Docs_Generate_Publish", ["typedoc:build", "copy:nojekyll", "git_deploy:ghPages"]);
 };
