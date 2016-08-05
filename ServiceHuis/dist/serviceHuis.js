@@ -30,6 +30,15 @@ var ServiceHuis;
 (function (ServiceHuis) {
     var DataSets;
     (function (DataSets) {
+        /**
+         * Alle gebieden, gebiedregelingen, regelingen, tijdvakken en tariefdelen horende bij de opgegeven gebiedsbeheerder.
+         * @param areamanagerid Identificatiecode van de gebiedsbeheerder of parkeerexploitant.
+         * @param callback Functie die aangeroepen zal worden met resultaat
+         * @param city Beschrijving van de gebiedsbeheerder.
+         * @param usageId Filter op identificatiecode van het gebruiksdoel dat geldt voor een parkeergebied of -faciliteit.
+         * @param filterOnActive Filter op geldigheid van de gebieden.
+         * @returns Object met alle info voor gebiedsbeheerder via callback functie.
+         */
         function getInfoByAreaManagerId(areaManagerId, callback, city, usageId, filterOnActive) {
             var info = new ServiceHuis.Results();
             info.areamanagerid = areaManagerId;
@@ -58,7 +67,10 @@ var ServiceHuis;
             processInfo(info);
         }
         /**
+         * Lijst met verkooppunten
          * http://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt
+         * @param callback Functie die aangeroepen zal worden met resultaat
+         * @returns Lijst van verkooppunten via callback functie.
          */
         function loadVerkooppunten(callback) {
             $.get("http://cors.sboulema.nl/" + "http://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", function (data) {
@@ -76,6 +88,8 @@ var ServiceHuis;
         /**
          * Tabel met informatie over de rechtspersoon die zeggenschap heeft over het gebruiksdoel en de regeling van een gebied.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIEDSBEHEERDER/2uc2-nnv3
+         * @param callback Functie die aangeroepen zal worden met resultaat
+         * @returns Lijst van gebiedsbeheerders via callback functie.
          */
         function loadGebiedsbeheerders(callback) {
             $.getJSON("https://opendata.rdw.nl/resource/t6n6-h9zf.json", function (data) {
@@ -87,6 +101,13 @@ var ServiceHuis;
         /**
          * Een benoemde ruimte met een gebruiksdoel waar een voertuig zich onder condities kan begeven of bevinden.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED/adw6-9hsg
+         * @param areamanagerid Identificatiecode van de gebiedsbeheerder of parkeerexploitant.
+         * @param usageId Filter op identificatiecode van het gebruiksdoel dat geldt voor een parkeergebied of -faciliteit.
+         * @param filterOnActive Filter op geldigheid van de gebieden.
+         * @param callback Functie die aangeroepen zal worden met resultaat
+         * @param callbackParams Parameter die meegegeven zal worden aan de callback functie
+         * @param callbackFinal Functie die aangeroepen zal worden in de callback functie
+         * @returns Lijst van gebieden via callback functie.
          */
         function loadGebieden(areamanagerid, callback, usageId, filterOnActive, callbackParams, callbackFinal) {
             $.getJSON("https://opendata.rdw.nl/resource/8u4d-s4q7.json?areamanagerid=" + areamanagerid, function (data) {
@@ -103,13 +124,19 @@ var ServiceHuis;
                         .select(function (row) { return row; });
                 }
                 callback(data, callbackParams, callbackFinal);
-                return data;
             });
         }
         DataSets.loadGebieden = loadGebieden;
         /**
          * Regeling of regelingen die op een gebied van toepassing zijn. Op een bepaald moment is op één gebied maar één regeling van toepassing, maar de regeling die van toepassing is op een gebied, kan periodiek veranderen.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-GEBIED-REGELING/qtex-qwd8
+         * @param areamanagerid Identificatiecode van de gebiedsbeheerder of parkeerexploitant.
+         * @param areaid Identificatiecode van een parkeergebied of - faciliteit.
+         * @param filterOnActive Filter op de geldigheid van de gebiedregelingen.
+         * @param callback Functie die aangeroepen zal worden met resultaat
+         * @param callbackParams Parameter die meegegeven zal worden aan de callback functie
+         * @param callbackFinal Functie die aangeroepen zal worden in de callback functie
+         * @returns Lijst van gebiedregelingen via callback functie.
          */
         function loadGebiedRegeling(areamanagerid, areaid, filterOnActive, callback, callbackParams, callbackFinal) {
             var url = "https://opendata.rdw.nl/resource/v7za-hcf3.json?areamanagerid=" + areamanagerid;
@@ -124,13 +151,17 @@ var ServiceHuis;
                         .select(function (row) { return row; });
                 }
                 callback(data, callbackParams, callbackFinal);
-                return data;
             });
         }
         DataSets.loadGebiedRegeling = loadGebiedRegeling;
         /**
          * Deze tabel legt een koppeling tussen de gebieden zoals deze vastgelegd zijn in het NPR en de gebieden zoals deze voor Open Data Parkeren volgens de standaard SPDP2.0 gepubliceerd worden.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-PARKEERGEBIED/mz4f-59fw
+         * @param areamanagerid Identificatiecode van de gebiedsbeheerder of parkeerexploitant.
+         * @param callback Functie die aangeroepen zal worden met resultaat
+         * @param callbackParams Parameter die meegegeven zal worden aan de callback functie
+         * @param callbackFinal Functie die aangeroepen zal worden in de callback functie
+         * @returns Lijst van parkeergebieden via callback functie.
          */
         function loadParkeergebieden(areamanagerid, callback, callbackParams, callbackFinal) {
             $.getJSON("https://opendata.rdw.nl/resource/svfa-juwh.json?areamanagerid=" + areamanagerid, function (data) {
@@ -143,6 +174,13 @@ var ServiceHuis;
          * aspecten van een regeling worden vastgelegd. Tijdvakken mogen niet overlappen, maar tijdvakken hoeven niet aaneen te sluiten. Voor die gedeelten van het etmaal waarvoor geen tijdvak is, geldt dat volgens
          * de regeling het recht geen tarief heeft, bv. overdag betaald parkeren, maar 's avonds en 's nachts gratis.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-TIJDVAK/ixf8-gtwq
+         * @param areamanagerid Identificatiecode van de gebiedsbeheerder of parkeerexploitant.
+         * @param fareCalculationCode Verwijzing naar het tarief, indien voor een recht in een tijdvak een tarief verschuldigd is.
+         * @param filterOnActive Filter op de geldigheid van de tijdvakken.
+         * @param callback Functie die aangeroepen zal worden met resultaat
+         * @param callbackParams Parameter die meegegeven zal worden aan de callback functie
+         * @param callbackFinal Functie die aangeroepen zal worden in de callback functie
+         * @returns Lijst van gebiedregelingen via callback functie.
          */
         function loadTijdvak(areamanagerid, fareCalculationCode, filterOnActive, callback, callbackParams, callbackFinal) {
             $.getJSON("https://opendata.rdw.nl/resource/pwnm-2uua.json?areamanagerid=" + areamanagerid, function (data) {
@@ -166,6 +204,13 @@ var ServiceHuis;
          * Een tarief bestaat uit 1 of meerdere tariefdelen. Als er een vast tarief per tijdvak is, ongeacht de parkeerduur, dan is er 1 deel zonder tariefdeel duurbegrenzing. Als het tarief afhankelijk is van de
          * parkeerduur (progressief/degressief tarief), zijn er meerdere tariefdelen, waarvan een aantal qua duur begrensd.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-TARIEFDEEL/534e-5vdg
+         * @param areamanagerid Identificatiecode van de gebiedsbeheerder of parkeerexploitant.
+         * @param fareCalculationCode Verwijzing naar het tarief, indien voor een recht in een tijdvak een tarief verschuldigd is.
+         * @param filterOnActive Filter op de geldigheid van de tariefdelen.
+         * @param callback Functie die aangeroepen zal worden met resultaat
+         * @param callbackParams Parameter die meegegeven zal worden aan de callback functie
+         * @param callbackFinal Functie die aangeroepen zal worden in de callback functie
+         * @returns Lijst van tariefdelen via callback functie.
          */
         function loadTariefdeel(areamanagerid, fareCalculationCode, filterOnActive, callback, callbackParams, callbackFinal) {
             var url = "https://opendata.rdw.nl/resource/m3un-bgqw.json?areamanagerid=" + areamanagerid;
@@ -186,6 +231,12 @@ var ServiceHuis;
         /**
          * Een regeling bevat alle condities die gelden wanneer iemand een recht voor een bepaald gebied verwerft.
          * https://opendata.rdw.nl/Parkeren/Open-Data-Parkeren-REGELING/pezp-7mrc
+         * @param areamanagerid Identificatiecode van de gebiedsbeheerder of parkeerexploitant.
+         * @param filterOnActive Filter op de geldigheid van de regelingen.
+         * @param callback Functie die aangeroepen zal worden met resultaat
+         * @param callbackParams Parameter die meegegeven zal worden aan de callback functie
+         * @param callbackFinal Functie die aangeroepen zal worden in de callback functie
+         * @returns Lijst van regelingen via callback functie.
          */
         function loadRegeling(areamanagerid, callback, filterOnActive, callbackParams, callbackFinal) {
             $.getJSON("https://opendata.rdw.nl/resource/n5c7-ce36.json?areamanagerid=" + areamanagerid, function (data) {
