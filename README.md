@@ -8,3 +8,8 @@ Typescript library to easily get data from the NPR Servicehuis
 
 ## Documentation
 [https://sboulema.github.io/ServiceHuis/](https://sboulema.github.io/ServiceHuis/)
+
+### UML
+![UML](https://cdn.rawgit.com/sboulema/ServiceHuis/master/ServiceHuis/UML/ServiceHuis-UML.png)
+
+
