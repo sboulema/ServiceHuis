@@ -261,7 +261,7 @@ namespace ServiceHuis {
 
             return new jinqJs()
                 .from(verkooppunten)
-                .where<Verkooppunt>(row => (typeof areaid !== "undefined" && row.gebied.toUpperCase() === areaid.toUpperCase() && row.gebDomein === areamanagerid))
+                .where<Verkooppunt>(row => (typeof row.gebied !== "undefined" && row.gebied.toUpperCase() === areaid.toUpperCase() && row.gebDomein === areamanagerid))
                 .select<string>(<Verkooppunt>(row) => row.verkooppunt);
         }
 

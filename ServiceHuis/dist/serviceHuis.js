@@ -259,7 +259,7 @@ var ServiceHuis;
             }
             return new jinqJs()
                 .from(verkooppunten)
-                .where(function (row) { return (typeof areaid !== "undefined" && row.gebied.toUpperCase() === areaid.toUpperCase() && row.gebDomein === areamanagerid); })
+                .where(function (row) { return (typeof row.gebied !== "undefined" && row.gebied.toUpperCase() === areaid.toUpperCase() && row.gebDomein === areamanagerid); })
                 .select(function (row) { return row.verkooppunt; });
         }
         Utils.getZoneCodes = getZoneCodes;
