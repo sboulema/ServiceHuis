@@ -255,6 +255,10 @@ namespace ServiceHuis {
 
     export module Utils {
         export function getZoneCodes(verkooppunten: Verkooppunt[], areamanagerid: string, areaid: string) {
+            if ((typeof areaid === "undefined")) {
+                return [""];
+            }
+
             return new jinqJs()
                 .from(verkooppunten)
                 .where<Verkooppunt>(row => (row.gebied.toUpperCase() === areaid.toUpperCase() && row.gebDomein === areamanagerid))
