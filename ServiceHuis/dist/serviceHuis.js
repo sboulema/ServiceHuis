@@ -256,7 +256,7 @@ var ServiceHuis;
         function getZoneCodes(verkooppunten, areamanagerid, areaid) {
             return new jinqJs()
                 .from(verkooppunten)
-                .where(function (row) { return (row.gebied === areaid && row.gebDomein === areamanagerid); })
+                .where(function (row) { return (row.gebied.toUpperCase() === areaid.toUpperCase() && row.gebDomein === areamanagerid); })
                 .select(function (row) { return row.verkooppunt; });
         }
         Utils.getZoneCodes = getZoneCodes;

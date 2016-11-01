@@ -257,7 +257,7 @@ namespace ServiceHuis {
         export function getZoneCodes(verkooppunten: Verkooppunt[], areamanagerid: string, areaid: string) {
             return new jinqJs()
                 .from(verkooppunten)
-                .where<Verkooppunt>(row => (row.gebied === areaid && row.gebDomein === areamanagerid))
+                .where<Verkooppunt>(row => (row.gebied.toUpperCase() === areaid.toUpperCase() && row.gebDomein === areamanagerid))
                 .select<string>(<Verkooppunt>(row) => row.verkooppunt);
         }
 
