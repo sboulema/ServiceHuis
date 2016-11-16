@@ -263,6 +263,13 @@ var ServiceHuis;
                 .select(function (row) { return row.verkooppunt; });
         }
         Utils.getZoneCodes = getZoneCodes;
+        function getAreaIdByZoneCode(verkooppunten, zoneCode) {
+            return new jinqJs()
+                .from(verkooppunten)
+                .where(function (row) { return row.verkooppunt === zoneCode; })
+                .select(function (row) { return row.gebied; });
+        }
+        Utils.getAreaIdByZoneCode = getAreaIdByZoneCode;
         function formatTimeframe(timeframe) {
             if (timeframe === "0") {
                 return "00:00";

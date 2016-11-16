@@ -265,6 +265,13 @@ namespace ServiceHuis {
                 .select<string>(<Verkooppunt>(row) => row.verkooppunt);
         }
 
+        export function getAreaIdByZoneCode(verkooppunten: Verkooppunt[], zoneCode: string) {
+            return new jinqJs()
+                .from(verkooppunten)
+                .where<Verkooppunt>(row => row.verkooppunt === zoneCode)
+                .select<string>(<Verkooppunt>(row) => row.gebied);
+        }
+
         export function formatTimeframe(timeframe: string) {
             if (timeframe === "0") {
                 return "00:00";
