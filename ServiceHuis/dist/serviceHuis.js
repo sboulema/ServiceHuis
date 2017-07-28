@@ -27,6 +27,15 @@ var ServiceHuis;
 /// <reference path="models/results.ts" />
 /// <reference path="models/regeling.ts" />
 var ServiceHuis;
+/// <reference path="typings/jinqjs/jinqjs.d.ts" />
+/// <reference path="scripts/typings/jquery/jquery.d.ts" />
+/// <reference path="models/verkooppunt.ts" />
+/// <reference path="models/gebied.ts" />
+/// <reference path="models/gebiedregeling.ts" />
+/// <reference path="models/tijdvak.ts" />
+/// <reference path="models/tariefdeel.ts" />
+/// <reference path="models/results.ts" />
+/// <reference path="models/regeling.ts" />
 (function (ServiceHuis) {
     var DataSets;
     (function (DataSets) {
@@ -68,12 +77,12 @@ var ServiceHuis;
         }
         /**
          * Lijst met verkooppunten
-         * http://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt
+         * https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt
          * @param callback Functie die aangeroepen zal worden met resultaat
          * @returns Lijst van verkooppunten via callback functie.
          */
         function loadVerkooppunten(callback) {
-            $.get("http://cors.sboulema.nl/" + "http://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", function (data) {
+            $.get("https://crossorigin.me/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", function (data) {
                 var lines = data.split("\n");
                 lines.splice(0, 1);
                 var verkooppunten = new Array();
@@ -117,7 +126,7 @@ var ServiceHuis;
                         .where(function (row) { return (parseDate(row.startdatearea) <= new Date() && parseDate(row.enddatearea) >= new Date()); })
                         .select(function (row) { return row; });
                 }
-                if (usageId) {
+                if (usageId && usageId != '') {
                     data = new jinqJs()
                         .from(data)
                         .where(function (row) { return (row.usageid === usageId); })

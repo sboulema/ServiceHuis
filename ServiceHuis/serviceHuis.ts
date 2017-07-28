@@ -54,12 +54,12 @@ namespace ServiceHuis {
 
         /**
          * Lijst met verkooppunten
-         * http://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt
+         * https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt
          * @param callback Functie die aangeroepen zal worden met resultaat
          * @returns Lijst van verkooppunten via callback functie.
          */
         export function loadVerkooppunten(callback: any) {
-            $.get("http://cors.sboulema.nl/" + "http://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", data => {
+            $.get("https://crossorigin.me/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", data => {
                 var lines = data.split("\n");
                 lines.splice(0, 1);
 
@@ -107,7 +107,7 @@ namespace ServiceHuis {
                         .select(row => row);
                 }
 
-                if (usageId) {
+                if (usageId && usageId != '') {
                     data = new jinqJs()
                         .from(data)
                         .where<IGebied>(row => (row.usageid === usageId))
