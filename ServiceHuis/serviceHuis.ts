@@ -59,7 +59,7 @@ namespace ServiceHuis {
          * @returns Lijst van verkooppunten via callback functie.
          */
         export function loadVerkooppunten(callback: any) {
-            $.get("https://crossorigin.me/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", data => {
+            $.get("https://cors-anywhere.herokuapp.com/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", data => {
                 var lines = data.split("\n");
                 lines.splice(0, 1);
 

@@ -82,7 +82,7 @@ var ServiceHuis;
          * @returns Lijst van verkooppunten via callback functie.
          */
         function loadVerkooppunten(callback) {
-            $.get("https://crossorigin.me/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", function (data) {
+            $.get("https://cors-anywhere.herokuapp.com/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", function (data) {
                 var lines = data.split("\n");
                 lines.splice(0, 1);
                 var verkooppunten = new Array();
