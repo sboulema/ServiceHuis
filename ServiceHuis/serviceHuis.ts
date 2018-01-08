@@ -177,7 +177,7 @@ namespace ServiceHuis {
          * @returns Lijst van gebiedregelingen via callback functie.
          */
         export function loadTijdvak(areamanagerid: string, fareCalculationCode: string, filterOnActive: boolean, callback: any, callbackParams: any, callbackFinal: any) {
-            $.getJSON(`https://opendata.rdw.nl/resource/pwnm-2uua.json?areamanagerid=${areamanagerid}`, data => {
+            $.getJSON(`https://opendata.rdw.nl/resource/pwnm-2uua.json?areamanagerid=${areamanagerid}&$limit=50000`, data => {
 
                 if (filterOnActive) {
                     data = new jinqJs()

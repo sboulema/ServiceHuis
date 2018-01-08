@@ -192,7 +192,7 @@ var ServiceHuis;
          * @returns Lijst van gebiedregelingen via callback functie.
          */
         function loadTijdvak(areamanagerid, fareCalculationCode, filterOnActive, callback, callbackParams, callbackFinal) {
-            $.getJSON("https://opendata.rdw.nl/resource/pwnm-2uua.json?areamanagerid=" + areamanagerid, function (data) {
+            $.getJSON("https://opendata.rdw.nl/resource/pwnm-2uua.json?areamanagerid=" + areamanagerid + "&$limit=50000", function (data) {
                 if (filterOnActive) {
                     data = new jinqJs()
                         .from(data)
