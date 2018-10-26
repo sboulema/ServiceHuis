@@ -81,8 +81,9 @@ var ServiceHuis;
          * @param callback Functie die aangeroepen zal worden met resultaat
          * @returns Lijst van verkooppunten via callback functie.
          */
-        function loadVerkooppunten(callback) {
-            $.get("https://cors-anywhere.herokuapp.com/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", function (data) {
+        function loadVerkooppunten(callback, url, fallbackUrl) {
+            if (url === void 0) { url = "https://cors.sboulema.nl/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt"; }
+            $.get(url, function (data) {
                 var lines = data.split("\n");
                 lines.splice(0, 1);
                 var verkooppunten = new Array();
@@ -91,6 +92,8 @@ var ServiceHuis;
                     verkooppunten.push(new ServiceHuis.Verkooppunt(lineSegments));
                 });
                 callback(verkooppunten);
+            }).fail(function () {
+                loadVerkooppunten(callback, fallbackUrl);
             });
         }
         DataSets.loadVerkooppunten = loadVerkooppunten;

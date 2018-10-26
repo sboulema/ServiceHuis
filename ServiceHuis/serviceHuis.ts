@@ -58,8 +58,8 @@ namespace ServiceHuis {
          * @param callback Functie die aangeroepen zal worden met resultaat
          * @returns Lijst van verkooppunten via callback functie.
          */
-        export function loadVerkooppunten(callback: any) {
-            $.get("https://cors-anywhere.herokuapp.com/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", data => {
+        export function loadVerkooppunten(callback: any, url = "https://cors.sboulema.nl/" + "https://nprverkooppunten.rdw.nl/Productie/verkooppunten.txt", fallbackUrl?: string) {
+            $.get(url, data => {
                 var lines = data.split("\n");
                 lines.splice(0, 1);
 
@@ -71,6 +71,8 @@ namespace ServiceHuis {
                 });
 
                 callback(verkooppunten);
+            }).fail(function () {
+                loadVerkooppunten(callback, fallbackUrl);
             });
         }
 
